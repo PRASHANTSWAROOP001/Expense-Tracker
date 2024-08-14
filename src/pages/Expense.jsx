@@ -91,7 +91,7 @@ function Expense() {
 
       setExpense((prevExpense) => [...prevExpense, expenseObj]);
       setAmount(0);
-    } else if (options == 'expense' && amount > 0) {
+    } else if (options == 'investment' && amount > 0) {
       setTotalIncome((prevIncome) => prevIncome - parseFloat(amount));
 
       let investmentObj = {
@@ -177,9 +177,10 @@ function Expense() {
 
   return (
     <div className=" w-full h-screen ">
-      <div className=" w-full h-full flex sm:flex-col md:flex-row">
-        <section className=" sm:w-full sm:h-full md:w-1/2 md:h-full  flex justify-center md:items-center ">
-          <div className=" w-[60%] h-2/3 border-2 rounded-2xl shadow-md flex flex-col items-center gap-4">
+      <div className=" w-full h-full flex flex-col  md:flex-row">
+        <section className=" w-full h-full md:w-1/2 flex  justify-center mt-2 md:items-center ">
+
+          <div className=" w-[80%] h-4/5 sm:w-[60%]  sm:h-2/3 border-2 rounded-2xl shadow-md flex flex-col items-center gap-4">
             <h6 className="text-center text-lg">New Transactions</h6>
 
             <input
@@ -278,7 +279,7 @@ function Expense() {
             </select>
 
             <button
-              className="w-[80%] h-10 bg-gray-800 text-white rounded-xl hover:bg-gray-700 "
+              className="w-[80%] h-10 bg-gray-800 text-white rounded-xl hover:bg-gray-700 mb-2  "
               onClick={addTransactions}
             >
               Add Transaction
@@ -286,8 +287,8 @@ function Expense() {
           </div>
         </section>
 
-        <section className="w-1/2 h-full flex flex-col ">
-          <table className="w-full flex-grow">
+        <section className=" w-full h-full md:w-1/2 flex flex-col px-2">
+          <table className="w-full h-[90%]">
             <thead className="border-2">
               {tableInstance.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
@@ -328,7 +329,7 @@ function Expense() {
             </tbody>
           </table>
 
-          <div className="pagination w-full flex justify-between py-2 pr-2 " >
+          <div className="pagination w-full h-[10%] flex justify-between items-center" >
             <button className='px-4 py-1 bg-yellow-400 hover:bg-yellow-300'
               onClick={() => tableInstance.previousPage()}
               disabled={!tableInstance.getCanPreviousPage()}
