@@ -1,0 +1,64 @@
+ <div className='flex flex-col gap-4 '>
+    <label htmlFor="record-type"> Choose Record Type</label>
+    <select name="record-type" id="record-type" ref={record_type} className='border-2 w-72 px-2 py-2'>
+      <option value="Expense"> Expense</option>
+      <option value="Budget"> Budget</option>
+    </select>
+    </div>
+
+
+    <div className='flex flex-col gap-4'>
+    <label htmlFor="expense-category"> Expense Type</label>
+    <select name="expense-category" id="expense-category" ref={expense_type} className='border-2 w-72  px-2 py-2'>
+      {expense_catergory.map((items)=>{
+        return ( <option key={items} value = {items}> {items} </option>)
+      })}
+
+    </select>
+    </div>
+
+    <div>
+
+    </div>
+
+    <input type="text" placeholder="amount"  value={amount} onChange = {(e)=>{setAmount(e.target.value)}} className = 'border-2 w-1/2 max-w-72 px-2 py-2 text-lg '/>
+
+    <button className='border-2 px-8 py-2  bg-green-500 hover:bg-green-400 text-white' onClick={()=>(handleAdd())}>Add</button>
+  </div>
+
+  <div>
+   <h1>Budget</h1>
+    <h3>{budget}</h3>
+    <ul>
+    { expense.map((items)=>{
+      return(
+        <li key={items.id}> Category {items.category} amount {items.value} </li>
+      )
+    })}
+    </ul>
+
+
+
+  /* const handleAdd = () => {
+  //   if( record_type.current.value === "Budget" && amount > 0 ){
+     
+  //     setBudget((prevBudget)=>(prevBudget + parseFloat(amount)))
+
+  //     setAmount(0)
+
+  //   }
+  //   else if(record_type.current.value ==="Expense" && amount > 0){
+  //     let values = {
+  //       id: new Date().getTime(),
+  //       value: amount,
+  //       category:expense_type.current.value,
+  //     }
+
+  //     setExpense((prevExpense)=>([...prevExpense,values]))
+  //     setBudget((prevBudget)=>(prevBudget - parseFloat(amount)))
+  //     setAmount(0)
+  //   }
+  
+   } */
+
+ 
