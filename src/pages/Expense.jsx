@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo,useEffect } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -26,7 +26,7 @@ function Expense() {
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
 
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   // this is our variables
@@ -51,58 +51,81 @@ function Expense() {
 
   const handleOptions = (option) => {
     setOptions(option);
-    if (options == 'expense') {
-      setCurrentData(expense);
-    } else if (options == 'income') {
-      setCurrentData(income);
-    } else {
-      setCurrentData(investment);
-    }
   };
+
+
+  useEffect (()=>{
+    if(options == "expense"){
+      setCurrentData(expense)
+    }
+    else if (options == "income"){
+      setCurrentData(income)
+    }
+    else if(options == "investment"){
+      setCurrentData(investment)
+    }
+  },[options,expense,income,investment])
 
   // fucntion that adds/ records each transactions
 
   const addTransactions = () => {
     const desc = description.current?.value || '';
 
+    const currentTime = getLocalTime()
+
+    const finalTime = time !== currentTime ? time : currentTime;
+
+    if ( time != currentTime){
+      setTime(currentTime)
+    }
+
+    const transactionObj ={
+      id: finalTime,
+      time : finalTime,
+      amount: amount,
+      category : category.current.value,
+      description : desc,
+    }
+
     if (options == 'income' && amount > 0) {
+
       setTotalIncome((prevIncome) => prevIncome + parseFloat(amount));
 
-      let incomeObj = {
-        id: time,
-        time: time,
-        amount: amount,
-        category: category.current.value,
-        description: desc,
-      };
-
-      setIncome((prevIncome) => [...prevIncome, incomeObj]);
+      setIncome((prevIncome) =>{
+        const updatedIncome =  [...prevIncome, transactionObj]
+        if(options == "income"){
+          setCurrentData(updatedIncome)
+        }
+        return updatedIncome
+      });
       setAmount(0);
-    } else if (options == 'expense' && amount > 0) {
+
+    } 
+    else if (options == 'expense' && amount > 0) {
+
       setTotalIncome((prevIncome) => prevIncome - parseFloat(amount));
 
-      let expenseObj = {
-        id: time,
-        time: time,
-        amount: amount,
-        category: category.current.value,
-        description: desc,
-      };
-
-      setExpense((prevExpense) => [...prevExpense, expenseObj]);
+      setExpense((prevExpense) => {
+        const updatedExpense = [...prevExpense,transactionObj]
+        if(options == "expense"){
+          setCurrentData(updatedExpense)
+        }
+        return updatedExpense; 
+      })
       setAmount(0);
-    } else if (options == 'investment' && amount > 0) {
+    }
+     else if (options == 'investment' && amount > 0) {
+
       setTotalIncome((prevIncome) => prevIncome - parseFloat(amount));
 
-      let investmentObj = {
-        id: time,
-        time: time,
-        amount: amount,
-        category: category.current.value,
-        description: desc,
-      };
+      setInvestment((prevInvest) =>{
+        const updatedInvestment = [...prevInvest,transactionObj]
+        if(options == "investment"){
+          setCurrentData(updatedInvestment)
+        }
+        return updatedInvestment;
+      });
 
-      setInvestment((prevInvest) => [...prevInvest, investmentObj]);
       setAmount(0);
     }
   };
@@ -159,9 +182,6 @@ function Expense() {
     []
   );
 
-  const data = useMemo(() => {
-    currentData;
-  }, [currentData]);
 
   const tableInstance = useReactTable({
     columns,
@@ -317,7 +337,7 @@ function Expense() {
               {tableInstance.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="text-center">
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
+                    <td key={cell.id} className='max-h-40'>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -330,7 +350,7 @@ function Expense() {
           </table>
 
           <div className="pagination w-full h-[10%] flex justify-between items-center" >
-            <button className='px-4 py-1 bg-yellow-400 hover:bg-yellow-300'
+            <button className='px-4 py-1 bg-yellow-400 hover:bg-yellow-300 rounded-sm'
               onClick={() => tableInstance.previousPage()}
               disabled={!tableInstance.getCanPreviousPage()}
             >
@@ -343,7 +363,7 @@ function Expense() {
                 {tableInstance.getPageCount()}
               </strong>{' '}
             </span>
-            <button className='px-4 py-1 bg-orange-400 hover:bg-orange-300'
+            <button className='px-4 py-1 bg-orange-400 hover:bg-orange-300 rounded-sm'
               onClick={() => tableInstance.nextPage()}
               disabled={!tableInstance.getCanNextPage()}
             >
